@@ -81,7 +81,9 @@ class Gettoken extends \Magento\Framework\App\Action\Action
     }
     private function radToken()
     {
-        return substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', mt_rand(1, 25))), 1, 25);
+        return substr(str_shuffle(
+            str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', mt_rand(1, 25))
+        ), 1, 25);
     }
     private function getSession()
     {

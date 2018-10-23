@@ -68,9 +68,9 @@ class ControllerActionPredispatch implements ObserverInterface
             $key        = base64_encode('email=' . $email . '&url=' . $url);
             
             $href       = $static_url . $key;
-            // $this->messageManager->addNotice(__('Magentomobileshop
-            //     extension is not activated yet, <a href="' . $href . '">
-            //     Click here</a> to activate your extension.'));
+            $this->messageManager->addNotice(__('Magentomobileshop
+                extension is not activated yet, <a href="' . $href . '">
+                Click here</a> to activate your extension.'));
         }
 
         if ((!$current) and $adminsession and $mssAppData != '') {

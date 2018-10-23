@@ -27,7 +27,7 @@ class ControllerActionPredispatch implements ObserverInterface
         \Magento\Framework\App\ResponseFactory $responseFactory,
         \Magento\Framework\Message\ManagerInterface $messageManager
     ) {
-         
+
         $this->logger                = $loggerInterface;
         $this->urlInterface          = $urlInterface;
         $this->action                = $action;
@@ -42,9 +42,103 @@ class ControllerActionPredispatch implements ObserverInterface
         $this->responseFactory       = $responseFactory;
         $this->messageManager        = $messageManager;
     }
+    private $codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+    private function decode($input)
+    {
+        $codes = $this->codes;
+        try {
+            if ($input == null) {
+                $message = "INPUT IS NULL";
+                $result->setData($message);
+                return $result;
+            }
+        } catch (\Exception $e) {
+            if (isset($e->xdebug_message)) {
+                $message = $e->xdebug_message;
+            } else {
+                $message = $e->getMessage();
+            }
+            $result->setData($message);
+            return $result;
+        }
+        try {
+            if (!empty($input) % 4 != 0) {
+                $message = "INVALID BASE64 STRING";
+                $result->setData($message);
+                return $result;
+            }
+        } catch (\Exception $e) {
+            if (isset($e->xdebug_message)) {
+                $message = $e->xdebug_message;
+            } else {
+                $message = $e->getMessage();
+            }
+            $result->setData($message);
+            return $result;
+        }
+        $decoded[] = ((strlen($input) * 3) / 4) - (strrpos($input, '=') > 0 ?
+            (strlen($input) - strrpos($input, '=')) : 0);
+        $inChars = str_split($input);
+        $count = count($inChars);
+        $j       = 0;
+        $b       = [];
+        for ($i = 0; $i < $count; $i += 4) {
+            $b[0]          = strpos($codes, $inChars[$i]);
+            $b[1]          = strpos($codes, $inChars[$i + 1]);
+            $b[2]          = strpos($codes, $inChars[$i + 2]);
+            $b[3]          = strpos($codes, $inChars[$i + 3]);
+            $decoded[$j++] = (($b[0] << 2) | ($b[1] >> 4));
+            if ($b[2] < 64) {
+                $decoded[$j++] = (($b[1] << 4) | ($b[2] >> 2));
+                if ($b[3] < 64) {
+                    $decoded[$j++] = (($b[2] << 6) | $b[3]);
+                }
+            }
+        }
+        $decodedstr = '';
+        $count_decode = count($decoded);
+        for ($i = 0; $i < $count_decode; $i++) {
+            $decodedstr .= htmlspecialchars_decode($decoded[$i]);
+        }
+        return $decodedstr;
+    }
+
+    private function encode($in)
+    {
+        $codes = $this->codes;
+        $inlen = strlen($in);
+        $in    = str_split($in);
+        $out   = '';
+        $b     = '';
+        for ($i = 0; $i < $inlen; $i += 3) {
+            $b = (ord($in[$i]) & 0xFC) >> 2;
+            $out .= ($codes[$b]);
+            $b = (ord($in[$i]) & 0x03) << 4;
+            if ($i + 1 < $inlen) {
+                $b |= (ord($in[$i + 1]) & 0xF0) >> 4;
+                $out .= ($codes[$b]);
+                $b = (ord($in[$i + 1]) & 0x0F) << 2;
+                if ($i + 2 < $inlen) {
+                    $b |= (ord($in[$i + 2]) & 0xC0) >> 6;
+                    $out .= ($codes[$b]);
+                    $b = ord($in[$i + 2]) & 0x3F;
+                    $out .= ($codes[$b]);
+                } else {
+                    $out .= ($codes[$b]);
+                    $out .= ('=');
+                }
+            } else {
+                $out .= ($codes[$b]);
+                $out .= ("==");
+            }
+        }
+
+        return $out;
+    }
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        $event = $observer->getEvent();
+        $event             = $observer->getEvent();
         $adminsession      = \Magento\Security\Model\AdminSessionInfo::LOGGED_IN;
         $url               = $this->urlInterface->getCurrentUrl();
         $objectData        = \Magento\Framework\App\ObjectManager::getInstance();
@@ -55,7 +149,7 @@ class ControllerActionPredispatch implements ObserverInterface
         $this->coreSession = $objectData->create('\Magento\Backend\Model\Session');
 
         if ($decode and !$this->coreRegistry->registry('mms_app_data')) {
-            $param = base64_decode($decode);
+            $param = $this->decode($decode);
             $this->coreRegistry->register('mms_app_data', $param);
             $mssAppData = $this->coreRegistry->registry('mms_app_data');
         }
@@ -66,8 +160,8 @@ class ControllerActionPredispatch implements ObserverInterface
             $email      = base64_encode($this->scopeConfig->getValue(self::TRNS_EMAIL));
             $url        = base64_encode($this->storeManager->getStore()->getBaseUrl());
             $key        = base64_encode('email=' . $email . '&url=' . $url);
-            
-            $href       = $static_url . $key;
+
+            $href = $static_url . $key;
             $this->messageManager->addNotice(__('Magentomobileshop
                 extension is not activated yet, <a href="' . $href . '">
                 Click here</a> to activate your extension.'));

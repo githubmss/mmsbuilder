@@ -25,15 +25,6 @@
 			 resource="Mmsbuilder_Connector::connector_configuration"
 		/>
 
-		<add id="Mmsbuilder_Connector::third_level_eample" 
-			 title="Manage Dashboard" 
-			 module="Mmsbuilder_Connector" 
-			 sortOrder="14"  
-			 resource="Magento_Backend::content"			 
-			 parent="Mmsbuilder_Connector::advanced_connector" 
-			 action="mmsbuilder_connector/dashboard"
-		/>
-
     </menu>
 </config>
 

@@ -17,9 +17,11 @@ class ControllerActionPredispatch implements ObserverInterface
         \Magento\Framework\UrlInterface $urlInterface,
         \Magento\Backend\App\Action $action,
         \Magento\Framework\Registry $coreRegistry,
+
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Locale\Resolver $resolver,
         \Magento\Config\Model\ResourceModel\Config $resourceConfig,
+        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList,
         \Magento\Framework\App\Response\Http $response,
@@ -41,6 +43,7 @@ class ControllerActionPredispatch implements ObserverInterface
         $this->resultRedirectFactory = $resultRedirectFactory;
         $this->responseFactory       = $responseFactory;
         $this->messageManager        = $messageManager;
+        $this->resultJsonFactory     = $resultJsonFactory;
     }
     private $codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
@@ -69,18 +72,14 @@ class ControllerActionPredispatch implements ObserverInterface
                 return $result;
             }
         } catch (\Exception $e) {
-            if (isset($e->xdebug_message)) {
-                $message = $e->xdebug_message;
-            } else {
-                $message = $e->getMessage();
-            }
+            $message = $e->xdebug_message;
             $result->setData($message);
             return $result;
         }
         $decoded[] = ((strlen($input) * 3) / 4) - (strrpos($input, '=') > 0 ?
             (strlen($input) - strrpos($input, '=')) : 0);
         $inChars = str_split($input);
-        $count = count($inChars);
+        $count   = count($inChars);
         $j       = 0;
         $b       = [];
         for ($i = 0; $i < $count; $i += 4) {
@@ -96,7 +95,7 @@ class ControllerActionPredispatch implements ObserverInterface
                 }
             }
         }
-        $decodedstr = '';
+        $decodedstr   = '';
         $count_decode = count($decoded);
         for ($i = 0; $i < $count_decode; $i++) {
             $decodedstr .= htmlspecialchars_decode($decoded[$i]);
@@ -139,6 +138,7 @@ class ControllerActionPredispatch implements ObserverInterface
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
         $event             = $observer->getEvent();
+        $result            = $this->resultJsonFactory->create();
         $adminsession      = \Magento\Security\Model\AdminSessionInfo::LOGGED_IN;
         $url               = $this->urlInterface->getCurrentUrl();
         $objectData        = \Magento\Framework\App\ObjectManager::getInstance();

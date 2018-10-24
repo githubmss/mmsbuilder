@@ -325,22 +325,22 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
         if ($this->compareExp() > 4800) {
             $result->setData(['status' => 'error', 'code' => '001']);
-            return $result;
+            return true;
         }
 
         if ($this->scopeConfig->getValue('magentomobileshop/secure/token') != $helper) {
             $result->setData(['status' => 'error', 'code' => '002']);
-            return $result;
+            return true;
         }
         if (!$this->scopeConfig->getValue('magentomobileshop/key/status')) {
             $result->setData(['status' => 'error', 'code' => '003']);
-            return $result;
+            return true;
         }
         if ($this->compareExp() > 4800 ||
             $this->scopeConfig->getValue('magentomobileshop/secure/token') != isset($helper)
             || !$this->scopeConfig->getValue('magentomobileshop/key/status') || !$helper) {
             $result->setData(['status' => 'error', 'code' => '004']);
-            return $result;
+            return true;
         }
     }
     public function storeConfig($storeid)

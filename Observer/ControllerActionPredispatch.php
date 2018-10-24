@@ -15,9 +15,9 @@ class ControllerActionPredispatch implements ObserverInterface
     public function __construct(
         \Psr\Log\LoggerInterface $loggerInterface,
         \Magento\Framework\UrlInterface $urlInterface,
+        \Magento\Framework\ObjectManagerInterface $objectmanager,
         \Magento\Backend\App\Action $action,
         \Magento\Framework\Registry $coreRegistry,
-
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Locale\Resolver $resolver,
         \Magento\Config\Model\ResourceModel\Config $resourceConfig,
@@ -44,17 +44,18 @@ class ControllerActionPredispatch implements ObserverInterface
         $this->responseFactory       = $responseFactory;
         $this->messageManager        = $messageManager;
         $this->resultJsonFactory     = $resultJsonFactory;
+         $this->_objectManager = $objectmanager;
     }
     private $codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
     private function decode($input)
     {
-        $codes = $this->codes;
+        $codes  = $this->codes;
+        $result = $this->resultJsonFactory->create();
         try {
             if ($input == null) {
                 $message = "INPUT IS NULL";
-                $result->setData($message);
-                return $result;
+                return $message;
             }
         } catch (\Exception $e) {
             if (isset($e->xdebug_message)) {
@@ -62,19 +63,7 @@ class ControllerActionPredispatch implements ObserverInterface
             } else {
                 $message = $e->getMessage();
             }
-            $result->setData($message);
-            return $result;
-        }
-        try {
-            if (!empty($input) % 4 != 0) {
-                $message = "INVALID BASE64 STRING";
-                $result->setData($message);
-                return $result;
-            }
-        } catch (\Exception $e) {
-            $message = $e->xdebug_message;
-            $result->setData($message);
-            return $result;
+            return $message;
         }
         $decoded[] = ((strlen($input) * 3) / 4) - (strrpos($input, '=') > 0 ?
             (strlen($input) - strrpos($input, '=')) : 0);
@@ -98,8 +87,9 @@ class ControllerActionPredispatch implements ObserverInterface
         $decodedstr   = '';
         $count_decode = count($decoded);
         for ($i = 0; $i < $count_decode; $i++) {
-            $decodedstr .= htmlspecialchars_decode($decoded[$i]);
+            $decodedstr .= pack("C*", $decoded[$i]);
         }
+
         return $decodedstr;
     }
 
@@ -138,10 +128,12 @@ class ControllerActionPredispatch implements ObserverInterface
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
         $event             = $observer->getEvent();
+        $objectData        = \Magento\Framework\App\ObjectManager::getInstance();
+        $requestInterface  = $objectData->get('Magento\Framework\App\RequestInterface');
+        $controllerName    = $requestInterface->getControllerName();
         $result            = $this->resultJsonFactory->create();
         $adminsession      = \Magento\Security\Model\AdminSessionInfo::LOGGED_IN;
         $url               = $this->urlInterface->getCurrentUrl();
-        $objectData        = \Magento\Framework\App\ObjectManager::getInstance();
         $this->request     = $objectData->create('\Magento\Framework\App\Request\Http');
         $decode            = $this->request->getParam('mms_id');
         $mssAppData        = '';
@@ -153,20 +145,21 @@ class ControllerActionPredispatch implements ObserverInterface
             $this->coreRegistry->register('mms_app_data', $param);
             $mssAppData = $this->coreRegistry->registry('mms_app_data');
         }
+
         $current = $this->scopeConfig->getValue('magentomobileshop/secure/key');
+        if ($controllerName == 'system_config') {
+            if (!$this->scopeConfig->getValue(self::XML_SECURE_KEY)) {
+                $static_url = 'https://www.magentomobileshop.com/user/buildApp?key_info=';
+                $email      = base64_encode($this->scopeConfig->getValue(self::TRNS_EMAIL));
+                $url        = base64_encode($this->storeManager->getStore()->getBaseUrl());
+                $key        = base64_encode('email=' . $email . '&url=' . $url);
 
-        if (!$this->scopeConfig->getValue(self::XML_SECURE_KEY) and $adminsession) {
-            $static_url = 'https://www.magentomobileshop.com/user/buildApp?key_info=';
-            $email      = base64_encode($this->scopeConfig->getValue(self::TRNS_EMAIL));
-            $url        = base64_encode($this->storeManager->getStore()->getBaseUrl());
-            $key        = base64_encode('email=' . $email . '&url=' . $url);
-
-            $href = $static_url . $key;
-            $this->messageManager->addNotice(__('Magentomobileshop
+                $href = $static_url . $key;
+                $this->messageManager->addNotice(__('Magentomobileshop
                 extension is not activated yet, <a href="' . $href . '">
                 Click here</a> to activate your extension.'));
+            }
         }
-
         if ((!$current) and $adminsession and $mssAppData != '') {
             if ((!$current)) {
                 $str        = self::ACTIVATION_URL;

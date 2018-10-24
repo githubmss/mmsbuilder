@@ -12,3 +12,4 @@ class Msscontent extends \Magento\Framework\View\Element\Template
     <?php
     }
 }
+

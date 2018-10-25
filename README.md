@@ -1,7 +1,7 @@
 # Magento 2 Connector RestApi Extension 
 
 
-Mmsbuilder is a fully functional mobile native application(iOS/Android) for the online stores based on Magento platform. All you need to do is, configure your store with the app and it is ready to be used by your customers. The mobile app developed using native platforms which transform your eCommerce business into a fresh shopping experience on all mobile devices with stunning designs. Not just an app, Mss builder offers a complete package that does not only bring the better way for your users to experience your Magento store but also make your store more professional with a friendly interface with smooth navigation and awesome animation effects, stunning design and unique for Magento2 based store.
+Mmsbuilder is a fully functional mobile native application(iOS/Android) for the online stores based on Magento platform. All you need to do is, configure your store with the app and it is ready to be used by your customers. The mobile app developed using native platforms which transform your eCommerce business into a fresh shopping experience on all mobile devices with stunning designs. Not just an app, Mms builder offers a complete package that does not only bring the better way for your users to experience your Magento store but also make your store more professional with a friendly interface with smooth navigation and awesome animation effects, stunning design and unique for Magento2 based store.
 
 [![Stable Version!]:Magento 2.2
 

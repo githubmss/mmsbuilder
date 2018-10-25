@@ -17,7 +17,7 @@ Mssbuilder is a fully functional mobile native application(iOS/Android) for the 
 Run the following command in Magento 2 root folder:
 
 ```
-composer require mssbuilder/connector dev-master
+composer require mmsbuilder/connector dev-master
 php bin/magento setup:di:compile
 php bin/magento setup:upgrade
 php bin/magento setup:static-content:deploy
@@ -25,7 +25,7 @@ sudo chmod  0777 -R  var/*
 sudo chmod  0777 -R  generated/*
 sudo chmod  0777 -R  pub/static/*
 ```
-It will install module in vendor directory with name mssbuilder/connector
+It will install module in vendor directory with name mmsbuilder/connector
 
 ## 3. Features with App integration
 

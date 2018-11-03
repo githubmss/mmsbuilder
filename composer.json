@@ -10,7 +10,8 @@
     "OSL-3.0",
     "AFL-3.0"
   ],
-  "minimum-stability": "dev",
+  "minimum-stability": "beta",
+  "prefer-stable": true,
   "autoload": {
     "files": [
       "registration.php"

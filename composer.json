@@ -7,9 +7,10 @@
   "type": "magento2-module",
   "version": "2.2.2.2",
   "license": [
-    "proprietary"
+    "OSL-3.0",
+    "AFL-3.0"
   ],
-  "autoload-dev": {
+  "autoload": {
     "files": [
       "registration.php"
     ],

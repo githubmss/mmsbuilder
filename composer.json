@@ -9,7 +9,7 @@
   "license": [
     "proprietary"
   ],
-  "autoload": {
+  "autoload-dev": {
     "files": [
       "registration.php"
     ],

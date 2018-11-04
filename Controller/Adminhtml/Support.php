@@ -1,7 +1,9 @@
 <?php
 namespace Mmsbuilder\Connector\Controller\Adminhtml;
 
-abstract class Support extends \Magento\Backend\App\Action
+use Magento\Backend\App\Action;
+
+class Support extends Action
 {
 
     public function execute()

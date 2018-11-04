@@ -2,7 +2,9 @@
 
 namespace Mmsbuilder\Connector\Controller\Adminhtml\Support;
 
-class Index extends \Magento\Backend\App\Action
+use Magento\Backend\App\Action;
+
+class Index extends Action
 {
 
     public function execute()

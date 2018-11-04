@@ -16,7 +16,6 @@ class ControllerActionPredispatch implements ObserverInterface
         \Psr\Log\LoggerInterface $loggerInterface,
         \Magento\Framework\UrlInterface $urlInterface,
         \Magento\Framework\ObjectManagerInterface $objectmanager,
-        \Magento\Backend\App\Action $action,
         \Magento\Framework\Registry $coreRegistry,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Locale\Resolver $resolver,
@@ -32,7 +31,6 @@ class ControllerActionPredispatch implements ObserverInterface
 
         $this->logger                = $loggerInterface;
         $this->urlInterface          = $urlInterface;
-        $this->action                = $action;
         $this->coreRegistry          = $coreRegistry;
         $this->scopeConfig           = $scopeConfig;
         $this->resolver              = $resolver;

@@ -1,15 +1,14 @@
 <?php
 
-namespace Mmsbuilder\Connector\Controller\Adminhtml\System\Connector;
+namespace Magentomobileshop\Connector\Controller\Adminhtml\System\Connector;
 
-use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Context;
 
 class Index extends \Magento\Framework\App\Action\Action
 {
     public function __construct(
         Context $context,
-        Session $coreSession,
+        \Magento\Backend\Model\Session $coreSession,
         \Magento\Framework\Module\ModuleListInterface $moduleList,
         \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
@@ -20,24 +19,23 @@ class Index extends \Magento\Framework\App\Action\Action
     }
     public function execute()
     {
-        $moduleCode = 'Mmsbuilder_Connector'; #Edit here with your Namespace_Module
+        $moduleCode = 'Magentomobileshop_Connector'; #Edit here with your Namespace_Module
         $moduleInfo = $this->_moduleList->getOne($moduleCode);
         $version    = $moduleInfo['setup_version'];
         $session    = $this->coreSession->getAppDatas();
 
-        $array            = [];
+        $array            = array();
         $array['version'] = $version;
         $push             = array_merge($session, $array);
         $data             = json_encode($push);
         $final_data       = base64_encode($data);
         $store            = $this->storeManager->getStore();
-        $imageUrl         = $this->getViewFileUrl('Mmsbuilder_Connector::images/magento_logo.png');
+        $imageUrl         = $this->getViewFileUrl('Magentomobileshop_Connector::images/magento_logo.png');
         ?>
         <div class="loading">
-          <span class="loading-text">We are activating your new mobile app,
-            Please do not close this window or click the Back button on your browser!!
-            <img class="load_img" src="<?php $this->getResponse()->setBody($imageUrl);?>">
-          </span>
+<span class="loading-text">We are activating your new mobile app, Please do not close this window or click the Back button on your browser!!
+  <img class="load_img" src="<?php echo $imageUrl; ?>">
+</span>
 </div>
 
 <style>
@@ -90,15 +88,8 @@ margin-top: -0.5em;
 -o-animation: spinner 1500ms infinite linear;
 animation: spinner 1500ms infinite linear;
 border-radius: 0.5em;
--webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0,
-rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0,
-rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0,
- rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0,
-  rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0,
-rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0,
- rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0,
- rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+-webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
 }
 
 
@@ -191,8 +182,9 @@ width: 514;
 }
 </style>
 <?php
-
-        return "<script src='//code.jquery.com/jquery-latest.js'></script>
+/*          $secure_key = Mage::getStoreConfig('magentomobileshop/secure/key');
+        $decode = base64_encode($secure_key); */
+        echo "<script src='//code.jquery.com/jquery-latest.js'></script>
       <script type='text/javascript'>
         jQuery(document).ready(function() {
           window.location.href = 'https://www.magentomobileshop.com/user/activating-app?app=" . $final_data . "' ;

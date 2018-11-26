@@ -4,6 +4,7 @@ namespace Mmsbuilder\Connector\Helper;
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     private $storeManager;
+    private $codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
     const XML_SECURE_TOKEN_EXP = 'secure/token/exp';
     public function __construct(
         \Magento\Checkout\Model\Cart $checkoutCart,
@@ -471,5 +472,52 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     private function loadProductModel($pid)
     {
         return $this->productModel->load($pid);
+    }
+
+    public function decode($input)
+    {
+        $codes  = $this->codes;
+        $objectData = \Magento\Framework\App\ObjectManager::getInstance();
+        $this->resultJsonFactory   = $objectData->get('\Magento\Framework\Controller\Result\JsonFactory');
+        $result = $this->resultJsonFactory->create();
+        try {
+            if ($input == null) {
+                $message = "INPUT IS NULL";
+                return $message;
+            }
+        } catch (\Exception $e) {
+            if (isset($e->xdebug_message)) {
+                $message = $e->xdebug_message;
+            } else {
+                $message = $e->getMessage();
+            }
+            return $message;
+        }
+        $decoded[] = ((strlen($input) * 3) / 4) - (strrpos($input, '=') > 0 ?
+            (strlen($input) - strrpos($input, '=')) : 0);
+        $inChars = str_split($input);
+        $count   = count($inChars);
+        $j       = 0;
+        $b       = [];
+        for ($i = 0; $i < $count; $i += 4) {
+            $b[0]          = strpos($codes, $inChars[$i]);
+            $b[1]          = strpos($codes, $inChars[$i + 1]);
+            $b[2]          = strpos($codes, $inChars[$i + 2]);
+            $b[3]          = strpos($codes, $inChars[$i + 3]);
+            $decoded[$j++] = (($b[0] << 2) | ($b[1] >> 4));
+            if ($b[2] < 64) {
+                $decoded[$j++] = (($b[1] << 4) | ($b[2] >> 2));
+                if ($b[3] < 64) {
+                    $decoded[$j++] = (($b[2] << 6) | $b[3]);
+                }
+            }
+        }
+        $decodedstr   = '';
+        $count_decode = count($decoded);
+        for ($i = 0; $i < $count_decode; $i++) {
+            $decodedstr .= pack("C*", $decoded[$i]);
+        }
+
+        return $decodedstr;
     }
 }

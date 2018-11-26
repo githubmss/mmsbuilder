@@ -5,7 +5,7 @@
         	 title="Magento Mobile Shop"
         	 module="Mmsbuilder_Connector"
         	 sortOrder="10" 
-        	 resource="Mmsbuilder_Connector::advanced"
+        	 resource="Mss_Connector::advanced"
 		/>
         
 		<add id="Mmsbuilder_Connector::advanced_connector"
@@ -23,6 +23,15 @@
 			 parent="Mmsbuilder_Connector::advanced_connector" 
 			 action="adminhtml/system_config/edit/section/configuration"	
 			 resource="Mmsbuilder_Connector::connector_configuration"
+		/>
+
+		<add id="Mmsbuilder_Connector::third_level_eample" 
+			 title="Manage Dashboard" 
+			 module="Mmsbuilder_Connector" 
+			 sortOrder="14"  
+			 resource="Magento_Backend::content"			 
+			 parent="Mmsbuilder_Connector::advanced_connector" 
+			 action="mmsbuilder_connector/dashboard"
 		/>
 
     </menu>

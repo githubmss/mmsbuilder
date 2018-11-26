@@ -23,13 +23,14 @@ class GetPages extends \Magento\Framework\App\Action\Action
     }
     public function execute()
     {
+        
         $this->customHelper->loadParent($this->getRequest()->getHeader('token'));
         $this->storeId  = $this->customHelper->storeConfig($this->getRequest()->getHeader('storeid'));
         $this->viewId   = $this->customHelper->viewConfig($this->getRequest()->getHeader('viewid'));
         $this->currency = $this->customHelper->currencyConfig($this->getRequest()->getHeader('currency'));
         $result         = $this->resultJsonFactory->create();
         /*check cache for dashboard API*/
-        $objectData = \Magento\Framework\App\objectData::getInstance();
+        $objectData = \Magento\Framework\App\ObjectManager::getInstance();
         $cacheObj   = $objectData->get('Magento\Framework\App\Cache');
         $cacheKey   = "mss_staticpages_store_" . $this->storeId;
         $cacheTag   = "mss";

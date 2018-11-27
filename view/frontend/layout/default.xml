@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-    
+    <!--     <referenceContainer name="top.container">
+            <block class="Magentomobileshop\Connector\Block\Msscontent" before="-" name="Msscontent" template="Magentomobileshop_Connector::default/Msscontent.phtml">
+            </block>
+        </referenceContainer> -->
     </body>
 </page>
 

@@ -1,5 +1,5 @@
 <?php
-namespace Mssbuilder\Connector\Controller\products;
+namespace Mmsbuilder\Connector\Controller\products;
 
 class Getpiclists extends \Magento\Framework\App\Action\Action
 {

@@ -28,7 +28,7 @@ class Getstoreinfo extends \Magento\Framework\App\Action\Action
         $this->currency = $this->customHelper->currencyConfig($this->getRequest()->getHeader('currency'));
         $result         = $this->resultJsonFactory->create();
         /*check cache for dashboard API*/
-        $objectData = \Magento\Framework\App\objectData::getInstance();
+        $objectData = \Magento\Framework\App\ObjectManager::getInstance();
         $cacheObj = $objectData->get('Magento\Framework\App\Cache');
         $cacheKey = "mss_storeinfo_store_".$this->storeId;
         $cacheTag = "mss";

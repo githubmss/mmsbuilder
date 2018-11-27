@@ -3,7 +3,7 @@
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
-                <item name="Mmsbuilder_connector_dashboard_listing_data_source" xsi:type="string">Mmsbuilder\Connector\Model\ResourceModel\Dashboard\Collection</item>
+                <item name="mmsbuilder_connector_dashboard_listing_data_source" xsi:type="string">Mmsbuilder\Connector\Model\ResourceModel\Dashboard\Collection</item>
             </argument>
         </arguments>
     </type>
